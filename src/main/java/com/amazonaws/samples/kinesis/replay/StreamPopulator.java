@@ -66,7 +66,7 @@ public class StreamPopulator {
     producerConfiguration.setCredentialsProvider((new AWSCredentialsProviderChain(new DefaultAWSCredentialsProviderChain())));
 
     final S3Client s3 = S3Client.builder().region(Region.of(bucketRegion))
-            .credentialsProvider( ProfileCredentialsProvider.builder().profileName("bjs").build())
+         //   .credentialsProvider( ProfileCredentialsProvider.builder().profileName("bjs").build())
             .build();
 
 
