@@ -17,6 +17,7 @@
 
 package com.amazonaws.samples.kinesis.replay.utils;
 
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.samples.kinesis.replay.events.JsonEvent;
 import com.amazonaws.samples.kinesis.replay.events.WatermarkEvent;
 import com.amazonaws.services.kinesis.producer.UserRecordResult;
@@ -53,7 +54,6 @@ public class WatermarkGenerator extends Thread {
   private static final long SLEEP_MILLIES = 100;
 
   private static final Logger LOG = LoggerFactory.getLogger(WatermarkGenerator.class);
-
 
   public WatermarkGenerator(Region streamRegion, String streamName) {
     this.streamName = streamName;

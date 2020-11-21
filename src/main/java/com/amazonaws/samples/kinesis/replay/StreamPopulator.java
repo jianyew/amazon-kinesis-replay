@@ -17,6 +17,8 @@
 
 package com.amazonaws.samples.kinesis.replay;
 
+import com.amazonaws.auth.AWSCredentialsProviderChain;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.samples.kinesis.replay.events.JsonEvent;
 import com.amazonaws.samples.kinesis.replay.utils.BackpressureSemaphore;
@@ -33,6 +35,8 @@ import java.time.Instant;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProviderChain;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
@@ -40,8 +44,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 public class StreamPopulator {
   private static final Logger LOG = LoggerFactory.getLogger(StreamPopulator.class);
 
-  private static final String DEFAULT_REGION_NAME = Regions.getCurrentRegion()==null ? "eu-west-1" : Regions.getCurrentRegion().getName();
-
+  private static final String DEFAULT_REGION_NAME = Regions.getCurrentRegion()==null ? "cn-north-1" : Regions.getCurrentRegion().getName();
 
   private final String streamName;
   private final String bucketName;
@@ -60,7 +63,12 @@ public class StreamPopulator {
         .setThreadingModel(KinesisProducerConfiguration.ThreadingModel.POOLED)
         .setAggregationEnabled(aggregate);
 
-    final S3Client s3 = S3Client.builder().region(Region.of(bucketRegion)).build();
+    producerConfiguration.setCredentialsProvider((new AWSCredentialsProviderChain(new DefaultAWSCredentialsProviderChain())));
+
+    final S3Client s3 = S3Client.builder().region(Region.of(bucketRegion))
+            .credentialsProvider( ProfileCredentialsProvider.builder().profileName("bjs").build())
+            .build();
+
 
     this.streamName = streamName;
     this.bucketName = bucketName;
@@ -205,6 +213,7 @@ public class StreamPopulator {
       LOG.info("all events have been sent");
     } catch (InterruptedException e) {
       //allow thread to exit
+
     } finally {
       eventBuffer.interrupt();
 

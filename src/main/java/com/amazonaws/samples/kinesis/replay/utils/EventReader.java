@@ -50,6 +50,9 @@ public class EventReader implements Iterator<JsonEvent> {
     this.bucketName = bucketName;
     this.eventParser = new JsonEvent.Parser(speedupFactor, timestampAttributeName);
 
+
+    // artifacts/kinesis-analytics-taxi-consumer/taxi-trips-partitioned.json.lz4/dropoff_year=2018/
+
     ListObjectsV2Request request = ListObjectsV2Request.builder().bucket(bucketName).prefix(prefix).build();
     this.s3Objects = s3.listObjectsV2Paginator(request).contents().iterator();
 
